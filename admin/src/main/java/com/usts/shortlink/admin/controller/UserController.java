@@ -3,13 +3,13 @@ package com.usts.shortlink.admin.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.usts.shortlink.admin.common.convention.result.Result;
 import com.usts.shortlink.admin.common.convention.result.Results;
-import com.usts.shortlink.admin.common.enums.UserErrorCodeEnum;
 import com.usts.shortlink.admin.dto.resp.UserActualRespDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
 import com.usts.shortlink.admin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -30,10 +30,22 @@ public class UserController {
         return Results.success(result);
     }
 
+    /**
+     * 根据用户名查询用户无脱敏信息
+     */
     @GetMapping("/api/shortlink/v1/actual/user/{username}")
     public Result<UserActualRespDTO> getActualUserByUsername(@PathVariable("username") String username) {
         UserRespDTO result = userService.getUserByUsername(username);
         return Results.success(BeanUtil.copyProperties(result, UserActualRespDTO.class));
+    }
+
+    /**
+     * 查询用户名是否存在
+     */
+    @GetMapping("/api/shortlink/v1/user/has-username")
+    public Result<Boolean> hasUsername(@RequestParam("username") String username) {
+        Boolean result = userService.hasUsername(username);
+        return Results.success(result);
     }
 
 }
