@@ -1,5 +1,6 @@
 package com.usts.shortlink.admin.service.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,12 +9,16 @@ import com.usts.shortlink.admin.common.enums.UserErrorCodeEnum;
 import com.usts.shortlink.admin.config.RBloomFilterConfiguration;
 import com.usts.shortlink.admin.dao.entity.UserDO;
 import com.usts.shortlink.admin.dao.mapper.UserMapper;
+import com.usts.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
 import com.usts.shortlink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static com.usts.shortlink.admin.common.enums.UserErrorCodeEnum.USER_NAME_EXIST;
+import static com.usts.shortlink.admin.common.enums.UserErrorCodeEnum.USER_SAVE_ERROR;
 
 /**
  * 用户接口实现层
@@ -40,5 +45,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public Boolean hasUsername(String username) {
         return rBloomFilter.contains(username);
+    }
+
+    @Override
+    public void register(UserRegisterReqDTO userRegisterReqDTO) {
+        if (hasUsername(userRegisterReqDTO.getUsername())) {
+            throw new ClientException(USER_NAME_EXIST);
+        }
+        int inserted = baseMapper.insert(BeanUtil.copyProperties(userRegisterReqDTO, UserDO.class));
+        if (inserted < 1) {
+            throw new ClientException(USER_SAVE_ERROR);
+        }
+        rBloomFilter.add(userRegisterReqDTO.getUsername());
     }
 }
