@@ -13,10 +13,13 @@ import com.usts.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
 import com.usts.shortlink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.usts.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
 import static com.usts.shortlink.admin.common.enums.UserErrorCodeEnum.USER_NAME_EXIST;
 import static com.usts.shortlink.admin.common.enums.UserErrorCodeEnum.USER_SAVE_ERROR;
 
@@ -28,6 +31,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Autowired
     private RBloomFilter<String> rBloomFilter;
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     public UserRespDTO getUserByUsername(String username) {
@@ -52,10 +57,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (hasUsername(userRegisterReqDTO.getUsername())) {
             throw new ClientException(USER_NAME_EXIST);
         }
-        int inserted = baseMapper.insert(BeanUtil.copyProperties(userRegisterReqDTO, UserDO.class));
-        if (inserted < 1) {
-            throw new ClientException(USER_SAVE_ERROR);
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + userRegisterReqDTO.getUsername());
+        try {
+            // 如果成功获取锁，肯定能够注册成功
+            if (lock.tryLock()) {
+                int inserted = baseMapper.insert(BeanUtil.copyProperties(userRegisterReqDTO, UserDO.class));
+                if (inserted < 1) {
+                    throw new ClientException(USER_SAVE_ERROR);
+                }
+                rBloomFilter.add(userRegisterReqDTO.getUsername());
+            } else {
+                // 没获取到锁，不需要等待，直接抛出异常即可
+                throw new ClientException(USER_NAME_EXIST);
+            }
+        } finally {
+            lock.unlock();
         }
-        rBloomFilter.add(userRegisterReqDTO.getUsername());
     }
 }
