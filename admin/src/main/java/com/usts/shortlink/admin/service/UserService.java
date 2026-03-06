@@ -3,6 +3,7 @@ package com.usts.shortlink.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.usts.shortlink.admin.dao.entity.UserDO;
 import com.usts.shortlink.admin.dto.req.UserRegisterReqDTO;
+import com.usts.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
 
 /**
@@ -29,5 +30,11 @@ public interface UserService extends IService<UserDO> {
      * @param userRegisterReqDTO 注册用户接收参数
      */
     void register(UserRegisterReqDTO userRegisterReqDTO);
+
+    /**
+     * 修改用户信息
+     * @param userUpdateReqDTO 修改用户信息接收参数
+     */
+    void update(UserUpdateReqDTO userUpdateReqDTO);
 
 }

@@ -10,6 +10,7 @@ import com.usts.shortlink.admin.config.RBloomFilterConfiguration;
 import com.usts.shortlink.admin.dao.entity.UserDO;
 import com.usts.shortlink.admin.dao.mapper.UserMapper;
 import com.usts.shortlink.admin.dto.req.UserRegisterReqDTO;
+import com.usts.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
 import com.usts.shortlink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
@@ -73,5 +74,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public void update(UserUpdateReqDTO userUpdateReqDTO) {
+        // TODO 验证当前用户名是否为登录用户
+        LambdaQueryWrapper<UserDO> updateWrapper = Wrappers.lambdaQuery(UserDO.class)
+                .eq(UserDO::getUsername, userUpdateReqDTO.getUsername());
+        baseMapper.update(BeanUtil.copyProperties(userUpdateReqDTO, UserDO.class), updateWrapper);
     }
 }
