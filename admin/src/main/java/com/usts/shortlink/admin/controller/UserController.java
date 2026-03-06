@@ -3,9 +3,11 @@ package com.usts.shortlink.admin.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.usts.shortlink.admin.common.convention.result.Result;
 import com.usts.shortlink.admin.common.convention.result.Results;
+import com.usts.shortlink.admin.dto.req.UserLoginReqDTO;
 import com.usts.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.usts.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.usts.shortlink.admin.dto.resp.UserActualRespDTO;
+import com.usts.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
 import com.usts.shortlink.admin.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -64,5 +66,17 @@ public class UserController {
     public Result<Void> update(@RequestBody UserUpdateReqDTO userUpdateReqDTO) {
         userService.update(userUpdateReqDTO);
         return Results.success();
+    }
+
+    @PostMapping("/api/short-link/v1/user/login")
+    public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO userLoginReqDTO) {
+        UserLoginRespDTO userLoginRespDTO = userService.login(userLoginReqDTO);
+        return Results.success(userLoginRespDTO);
+    }
+
+    @GetMapping("/api/short-link/v1/user/login/check-login")
+    public Result<Boolean> checkLogin(@RequestParam("username") String username, @RequestParam("token") String token) {
+        Boolean result = userService.checkLogin(username, token);
+        return Results.success(result);
     }
 }
