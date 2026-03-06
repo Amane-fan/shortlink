@@ -4,9 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import com.usts.shortlink.admin.common.convention.result.Result;
 import com.usts.shortlink.admin.common.convention.result.Results;
 import com.usts.shortlink.admin.dto.req.UserRegisterReqDTO;
+import com.usts.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.usts.shortlink.admin.dto.resp.UserActualRespDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
 import com.usts.shortlink.admin.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * 用户管理控制层
  */
 @RestController
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -54,6 +57,12 @@ public class UserController {
     @PostMapping("/api/short-link/v1/user")
     public Result<Void> register(@RequestBody UserRegisterReqDTO userRegisterReqDTO) {
         userService.register(userRegisterReqDTO);
+        return Results.success();
+    }
+
+    @PutMapping("/api/short-link/v1/user")
+    public Result<Void> update(@RequestBody UserUpdateReqDTO userUpdateReqDTO) {
+        userService.update(userUpdateReqDTO);
         return Results.success();
     }
 }
