@@ -82,4 +82,19 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
             throw new ServiceException("分组名称更新失败!");
         }
     }
+
+    @Override
+    public void deleteGroup(String gid) {
+        String username = UserContext.getUsername();
+        LambdaUpdateWrapper<GroupDO> updateWrapper = Wrappers.lambdaUpdate(GroupDO.class)
+                .eq(GroupDO::getGid, gid)
+                .eq(GroupDO::getDelFlag, 0)
+                .eq(GroupDO::getUsername, username);
+        GroupDO groupDO = new GroupDO();
+        groupDO.setDelFlag(1);
+        int update = baseMapper.update(groupDO, updateWrapper);
+        if (update < 1) {
+            throw new ServiceException("分组名称删除失败!");
+        }
+    }
 }
