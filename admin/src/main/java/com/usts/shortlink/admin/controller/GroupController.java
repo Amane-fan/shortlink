@@ -3,13 +3,11 @@ package com.usts.shortlink.admin.controller;
 import com.usts.shortlink.admin.common.convention.result.Result;
 import com.usts.shortlink.admin.common.convention.result.Results;
 import com.usts.shortlink.admin.dto.req.ShortLinkGroupSaveReqDTO;
+import com.usts.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
 import com.usts.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
 import com.usts.shortlink.admin.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +23,7 @@ public class GroupController {
      * 新增短链接分组
      * @param shortLinkGroupSaveReqDTO 短链接名称
      */
-    @PostMapping("/api/short-link/v1/group")
+    @PutMapping("/api/short-link/v1/group")
     public Result<Void> save(@RequestBody ShortLinkGroupSaveReqDTO shortLinkGroupSaveReqDTO) {
         groupService.saveGroup(shortLinkGroupSaveReqDTO.getName());
         return Results.success();
@@ -39,6 +37,17 @@ public class GroupController {
     public Result<List<ShortLinkGroupRespDTO>> listGroup() {
         List<ShortLinkGroupRespDTO> result = groupService.listGroup();
         return Results.success(result);
+    }
+
+    /**
+     * 修改短链接分组名称
+     * @param shortLinkGroupUpdateReqDTO
+     * @return
+     */
+    @PostMapping("/api/short-link/v1/group")
+    public Result<Void> updateGroup(@RequestBody ShortLinkGroupUpdateReqDTO shortLinkGroupUpdateReqDTO) {
+        groupService.updateGroup(shortLinkGroupUpdateReqDTO);
+        return Results.success();
     }
 
 }
