@@ -1,10 +1,12 @@
 package com.usts.shortlink.admin.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.usts.shortlink.admin.common.biz.user.UserContext;
 import com.usts.shortlink.admin.common.convention.exception.ClientException;
 import com.usts.shortlink.admin.common.enums.UserErrorCodeEnum;
 import com.usts.shortlink.admin.dao.entity.UserDO;
@@ -23,8 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -89,7 +89,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public void update(UserUpdateReqDTO userUpdateReqDTO) {
-        // TODO 验证当前用户名是否为登录用户
+        if (!StrUtil.equals(UserContext.getUsername(), userUpdateReqDTO.getUsername())) {
+            throw new ClientException("只能修改当前登录用户信息");
+        }
         LambdaQueryWrapper<UserDO> updateWrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, userUpdateReqDTO.getUsername());
         baseMapper.update(BeanUtil.copyProperties(userUpdateReqDTO, UserDO.class), updateWrapper);
@@ -125,7 +127,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public Boolean checkLogin(String username, String token) {
-        return stringRedisTemplate.hasKey(USER_LOGIN + username);
+        String cachedToken = stringRedisTemplate.opsForValue().get(USER_LOGIN + username);
+        return Objects.equals(cachedToken, token);
     }
 
     @Override

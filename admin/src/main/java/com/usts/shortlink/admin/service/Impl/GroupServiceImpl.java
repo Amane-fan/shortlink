@@ -1,9 +1,12 @@
 package com.usts.shortlink.admin.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.usts.shortlink.admin.common.biz.user.UserContext;
+import com.usts.shortlink.admin.common.convention.exception.ClientException;
 import com.usts.shortlink.admin.dao.entity.GroupDO;
 import com.usts.shortlink.admin.dao.mapper.GroupMapper;
 import com.usts.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
@@ -23,19 +26,22 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public void saveGroup(String groupName) {
+        String username = UserContext.getUsername();
+        if (StrUtil.isBlank(username)) {
+            throw new ClientException("当前登录用户不存在");
+        }
         // 保证生成的gid都是唯一的
         while (true) {
-
             String GID = RandomGeneratorUtil.generateRandom();
             LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                     .eq(GroupDO::getGid, GID)
-                    // TODO 设置用户名
-                    .eq(GroupDO::getUsername, null);
+                    .eq(GroupDO::getUsername, username);
             GroupDO hadGid = baseMapper.selectOne(queryWrapper);
             if (hadGid == null) {
                 GroupDO groupDO = GroupDO.builder()
                         .name(groupName)
                         .gid(GID)
+                        .username(username)
                         .sortOrder(0)
                         .build();
                 baseMapper.insert(groupDO);
@@ -47,10 +53,13 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public List<ShortLinkGroupRespDTO> listGroup() {
-        // TODO 获取用户名
+        String username = UserContext.getUsername();
+        if (StrUtil.isBlank(username)) {
+            throw new ClientException("当前登录用户不存在");
+        }
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getDelFlag, 0)
-//                .eq(GroupDO::getUsername, null)
+                .eq(GroupDO::getUsername, username)
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
         return BeanUtil.copyToList(groupDOList, ShortLinkGroupRespDTO.class);
