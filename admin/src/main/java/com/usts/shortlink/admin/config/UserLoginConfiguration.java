@@ -20,12 +20,12 @@ public class UserLoginConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userLoginInterceptor)
-                .addPathPatterns("/api/short-link/v1/**")
+                .addPathPatterns("/api/short-link/admin/v1/**")
                 .excludePathPatterns(
-                        "/api/short-link/v1/user",
-                        "/api/short-link/v1/user/login",
-                        "/api/short-link/v1/user/has-username",
-                        "/api/short-link/v1/user/login/check-login"
+                        "/api/short-link/admin/v1/user",
+                        "/api/short-link/admin/v1/user/login",
+                        "/api/short-link/admin/v1/user/has-username",
+                        "/api/short-link/admin/v1/user/login/check-login"
                 );
     }
 }
