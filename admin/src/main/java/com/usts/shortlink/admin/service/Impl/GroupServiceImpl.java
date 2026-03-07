@@ -11,14 +11,19 @@ import com.usts.shortlink.admin.common.convention.exception.ClientException;
 import com.usts.shortlink.admin.common.convention.exception.ServiceException;
 import com.usts.shortlink.admin.dao.entity.GroupDO;
 import com.usts.shortlink.admin.dao.mapper.GroupMapper;
+import com.usts.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import com.usts.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
 import com.usts.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
 import com.usts.shortlink.admin.service.GroupService;
 import com.usts.shortlink.admin.util.RandomGeneratorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 短链接接口分组实现层
@@ -96,5 +101,19 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         if (update < 1) {
             throw new ServiceException("分组名称删除失败!");
         }
+    }
+
+    @Override
+    public void orderGroup(List<ShortLinkGroupSortReqDTO> list) {
+        list.forEach(each -> {
+            GroupDO groupDO = GroupDO.builder()
+                    .sortOrder(each.getSortOrder())
+                    .build();
+            LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
+                    .eq(GroupDO::getGid, each.getGid())
+                    .eq(GroupDO::getUsername, UserContext.getUsername())
+                    .eq(GroupDO::getDelFlag, 0);
+            baseMapper.update(groupDO, queryWrapper);
+        });
     }
 }
