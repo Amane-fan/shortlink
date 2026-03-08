@@ -11,6 +11,7 @@ import com.usts.shortlink.project.dao.entity.ShortLinkDO;
 import com.usts.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.usts.shortlink.project.dto.req.ShortLinkCreateReqDTO;
 import com.usts.shortlink.project.dto.req.ShortLinkPageReqDTO;
+import com.usts.shortlink.project.dto.resp.ShortLinkCountQueryDTO;
 import com.usts.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
 import com.usts.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.usts.shortlink.project.service.ShortLinkService;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -32,6 +34,8 @@ public class ShotLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLinkD
 
     @Autowired
     private RBloomFilter<String> rBloomFilter;
+    @Autowired
+    private ShortLinkMapper shortLinkMapper;
 
     @Override
     public ShortLinkCreateRespDTO createShortLink(ShortLinkCreateReqDTO shortLinkCreateReqDTO) {
@@ -67,6 +71,12 @@ public class ShotLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLinkD
         Page<ShortLinkDO> page = new Page<>(shortLinkPageReqDTO.getCurrent(), shortLinkPageReqDTO.getSize());
         IPage<ShortLinkDO> resultPage = baseMapper.selectPage(page, queryWrapper);
         return resultPage.convert(each -> BeanUtil.copyProperties(each, ShortLinkPageRespDTO.class));
+    }
+
+    @Override
+    public List<ShortLinkCountQueryDTO> groupShortLinkCount(List<String> ids) {
+        List<ShortLinkCountQueryDTO> list = shortLinkMapper.groupShortLinkCount(ids);
+        return list;
     }
 
     private String generateShortUri(ShortLinkCreateReqDTO shortLinkCreateReqDTO) {

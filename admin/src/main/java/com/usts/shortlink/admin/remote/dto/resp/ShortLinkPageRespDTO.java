@@ -1,4 +1,4 @@
-package com.usts.shortlink.admin.dto.resp;
+package com.usts.shortlink.admin.remote.dto.resp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
