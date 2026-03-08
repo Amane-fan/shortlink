@@ -35,6 +35,11 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     @Override
     public void saveGroup(String groupName) {
         String username = UserContext.getUsername();
+        saveGroup(username, groupName);
+    }
+
+    @Override
+    public void saveGroup(String username, String groupName) {
         if (StrUtil.isBlank(username)) {
             throw new ClientException("当前登录用户不存在");
         }

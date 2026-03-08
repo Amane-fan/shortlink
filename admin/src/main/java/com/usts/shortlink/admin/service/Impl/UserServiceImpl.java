@@ -68,7 +68,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         return rBloomFilter.contains(username);
     }
 
-    @Transactional
     @Override
     public void register(UserRegisterReqDTO userRegisterReqDTO) {
         if (hasUsername(userRegisterReqDTO.getUsername())) {
@@ -88,8 +87,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                 }
                 rBloomFilter.add(userRegisterReqDTO.getUsername());
 
-                // 注册用户成功后，创建默认分组
-                groupService.saveGroup("默认分组");
+                // 注册用户成功后，为该用户创建默认分组
+                groupService.saveGroup(userRegisterReqDTO.getUsername(), "默认分组");
             } else {
                 // 没获取到锁，不需要等待，直接抛出异常即可
                 throw new ClientException(USER_NAME_EXIST);
