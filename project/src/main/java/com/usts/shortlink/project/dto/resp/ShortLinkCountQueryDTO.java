@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ShortLinkCountQueryDTO {
-
     /**
      * 分组id
      */

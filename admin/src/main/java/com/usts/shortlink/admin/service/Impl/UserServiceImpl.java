@@ -16,6 +16,7 @@ import com.usts.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.usts.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.usts.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.usts.shortlink.admin.dto.resp.UserRespDTO;
+import com.usts.shortlink.admin.service.GroupService;
 import com.usts.shortlink.admin.service.UserService;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -45,6 +47,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     private RedissonClient redissonClient;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private GroupService groupService;
 
     @Override
     public UserRespDTO getUserByUsername(String username) {
@@ -64,6 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         return rBloomFilter.contains(username);
     }
 
+    @Transactional
     @Override
     public void register(UserRegisterReqDTO userRegisterReqDTO) {
         if (hasUsername(userRegisterReqDTO.getUsername())) {
@@ -82,6 +87,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                     throw new ClientException(USER_EXIST);
                 }
                 rBloomFilter.add(userRegisterReqDTO.getUsername());
+
+                // 注册用户成功后，创建默认分组
+                groupService.saveGroup("默认分组");
             } else {
                 // 没获取到锁，不需要等待，直接抛出异常即可
                 throw new ClientException(USER_NAME_EXIST);
