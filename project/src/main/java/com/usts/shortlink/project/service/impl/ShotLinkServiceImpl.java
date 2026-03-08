@@ -1,12 +1,18 @@
 package com.usts.shortlink.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.usts.shortlink.project.common.convention.exception.ServiceException;
 import com.usts.shortlink.project.dao.entity.ShortLinkDO;
 import com.usts.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.usts.shortlink.project.dto.req.ShortLinkCreateReqDTO;
+import com.usts.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.usts.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
+import com.usts.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.usts.shortlink.project.service.ShortLinkService;
 import com.usts.shortlink.project.util.HashUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +40,6 @@ public class ShotLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLinkD
         shortLinkDO.setFullShortUrl(shortLinkDO.getDomain() + "/" + shortLinkDO.getShortUri());
         shortLinkDO.setClickNum(0);
         shortLinkDO.setEnableStatus(1);
-        shortLinkDO.setEnableStatus(0);
         shortLinkDO.setDelFlag(0);
 
         try {
@@ -51,6 +56,17 @@ public class ShotLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLinkD
                 .originUrl(shortLinkDO.getOriginUrl())
                 .fullShortUrl(shortLinkDO.getFullShortUrl())
                 .build();
+    }
+
+    @Override
+    public IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkPageReqDTO shortLinkPageReqDTO) {
+        LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
+                .eq(ShortLinkDO::getGid, shortLinkPageReqDTO.getGid())
+                .eq(ShortLinkDO::getDelFlag, 0)
+                .eq(ShortLinkDO::getEnableStatus, 1);
+        Page<ShortLinkDO> page = new Page<>(shortLinkPageReqDTO.getCurrent(), shortLinkPageReqDTO.getSize());
+        IPage<ShortLinkDO> resultPage = baseMapper.selectPage(page, queryWrapper);
+        return resultPage.convert(each -> BeanUtil.copyProperties(each, ShortLinkPageRespDTO.class));
     }
 
     private String generateShortUri(ShortLinkCreateReqDTO shortLinkCreateReqDTO) {

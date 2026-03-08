@@ -1,27 +1,15 @@
-package com.usts.shortlink.project.dao.entity;
+package com.usts.shortlink.project.dto.resp;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.usts.shortlink.project.common.database.BaseDO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 短链接实体
+ * 短链接分页返回参数
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@TableName("t_link")
-public class ShortLinkDO extends BaseDO implements Serializable {
+public class ShortLinkPageRespDTO {
 
     /**
      * ID
@@ -57,16 +45,6 @@ public class ShortLinkDO extends BaseDO implements Serializable {
      * 分组标识
      */
     private String gid;
-
-    /**
-     * 启用标识 0：未启用 1：已启用
-     */
-    private Integer enableStatus;
-
-    /**
-     * 创建类型 0：控制台 1：接口
-     */
-    private Integer createdType;
 
     /**
      * 有效期类型 0：永久有效 1：用户自定义
