@@ -1,6 +1,5 @@
-package com.usts.shortlink.project.dto.req;
+package com.usts.shortlink.admin.dto.req;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,7 +51,5 @@ public class ShortLinkCreateReqDTO {
     /**
      * 描述
      */
-    @TableField("`describe`")
     private String describe;
-
 }
