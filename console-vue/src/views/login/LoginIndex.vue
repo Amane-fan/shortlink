@@ -1,145 +1,160 @@
 <template>
   <div class="login-page">
-    <h1 class="title">SaaS 短 链 接 平 台(马丁)</h1>
-    <div class="login-box">
-      <!-- 登录 -->
-      <div class="logon" :class="{ hidden: !isLogin }">
-        <h2>用户登录</h2>
-        <el-form ref="loginFormRef1" :model="loginForm" label-width="50px" :rules="loginFormRule">
-          <div class="form-container1">
-            <el-form-item prop="phone">
-              <el-input v-model="loginForm.username" placeholder="请输入用户名" maxlength="11" show-word-limit clearable>
-                <template v-slot:prepend> 用户名 </template>
+    <div class="background-layer"></div>
+    <div class="grain-layer"></div>
+
+    <section class="login-shell">
+      <article class="intro-panel">
+        <span class="panel-tag">YUNLINK CONSOLE</span>
+        <h1>云链短链接</h1>
+        <p class="panel-summary">
+          一个聚焦短链创建、分组管理与访问统计的后台系统，适合本地演示、二次开发和面试展示。
+        </p>
+
+        <div class="feature-list">
+          <div class="feature-card">
+            <strong>短链生成</strong>
+            <span>统一管理链接有效期、分组归档与批量创建。</span>
+          </div>
+          <div class="feature-card">
+            <strong>数据统计</strong>
+            <span>沉淀访问趋势、设备维度与地域分布等核心指标。</span>
+          </div>
+          <div class="feature-card">
+            <strong>后台治理</strong>
+            <span>覆盖回收站、用户信息维护与管理侧常见操作。</span>
+          </div>
+        </div>
+
+        <div class="default-account">
+          <span>默认账号</span>
+          <strong>admin / admin123456</strong>
+        </div>
+      </article>
+
+      <article class="auth-panel">
+        <div class="auth-switch">
+          <button
+            class="switch-button"
+            :class="{ active: isLogin }"
+            type="button"
+            @click="isLogin = true"
+          >
+            登录
+          </button>
+          <button
+            class="switch-button"
+            :class="{ active: !isLogin }"
+            type="button"
+            @click="isLogin = false"
+          >
+            注册
+          </button>
+        </div>
+
+        <div v-if="isLogin" class="auth-card">
+          <div class="auth-copy">
+            <h2>欢迎回来</h2>
+            <p>登录后进入短链工作台，继续管理你的业务链接。</p>
+          </div>
+
+          <el-form ref="loginFormRef1" :model="loginForm" :rules="loginFormRule" class="auth-form">
+            <el-form-item prop="username">
+              <el-input v-model="loginForm.username" placeholder="请输入用户名" clearable>
+                <template #prepend>用户名</template>
               </el-input>
             </el-form-item>
 
             <el-form-item prop="password">
-              <el-input v-model="loginForm.password" type="password" clearable placeholder="请输入密码" show-password
-                style="margin-top: 20px">
-                <template v-slot:prepend> 密<span class="second-font">码</span> </template>
+              <el-input
+                v-model="loginForm.password"
+                type="password"
+                placeholder="请输入密码"
+                show-password
+                clearable
+              >
+                <template #prepend>密码</template>
               </el-input>
             </el-form-item>
-          </div>
-          <div class="btn-gourp">
-            <div>
-              <el-checkbox class="remeber-password" v-model="checked"
-                style="color: #a0a0a0; margin: 0 0 0px 0">记住密码</el-checkbox>
-            </div>
-            <div>
-              <el-button :loading="loading" @keyup.enter="login" type="primary" plain
-                @click="login(loginFormRef1)">登录</el-button>
-            </div>
-          </div>
-        </el-form>
-      </div>
-      <!-- 注册 -->
-      <div class="register" :class="{ hidden: isLogin }">
-        <h2>用户注册</h2>
-        <el-form ref="loginFormRef2" :model="addForm" label-width="50px" class="form-container" width="width"
-          :rules="addFormRule">
-          <el-form-item prop="username">
-            <el-input v-model="addForm.username" placeholder="请输入用户名" maxlength="11" show-word-limit clearable>
-              <template v-slot:prepend> 用户名 </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="mail">
-            <el-input v-model="addForm.mail" placeholder="请输入邮箱" show-word-limit clearable>
-              <template v-slot:prepend> 邮<span class="second-font">箱</span> </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="phone">
-            <el-input v-model="addForm.phone" placeholder="请输入手机号" show-word-limit clearable>
-              <template v-slot:prepend> 手机号 </template>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="realName">
-            <el-input v-model="addForm.realName" placeholder="请输入姓名" show-word-limit clearable>
-              <template v-slot:prepend> 姓<span class="second-font">名</span> </template>
-            </el-input>
-          </el-form-item>
 
-          <el-form-item prop="password">
-            <el-input v-model="addForm.password" type="password" clearable placeholder="请输入密码" show-password>
-              <template v-slot:prepend> 密<span class="second-font">码</span> </template>
-            </el-input>
-          </el-form-item>
-          <!-- 验证码 -->
-          <!-- <el-form-item prop="vertify_code">
-            <el-input
-              v-model="loginForm.vertify_code"
-              placeholder="验证码"
-              prefix-icon="el-icon-key"
-              clearable
-            >
-              <template v-slot:append>
-                <div class="login-code" @click="refreshCode" title="看不清？点击切换">
-                  <vertify-code :identifyCode="loginIdentifyCode"></vertify-code>
-                </div>
-              </template>
-            </el-input>
-          </el-form-item> -->
-          <div class="btn-gourp">
-            <div></div>
-            <div>
-              <el-button :loading="loading" @keyup.enter="login" type="primary" plain
-                @click="addUser(loginFormRef2)">注册</el-button>
+            <div class="form-actions">
+              <el-checkbox v-model="checked">记住密码</el-checkbox>
+              <el-button :loading="loading" type="primary" @click="login(loginFormRef1)">登录</el-button>
             </div>
+          </el-form>
+        </div>
+
+        <div v-else class="auth-card">
+          <div class="auth-copy">
+            <h2>创建账号</h2>
+            <p>注册后可直接进入后台，开始管理自己的短链数据。</p>
           </div>
-        </el-form>
-      </div>
-      <!-- 左右移动的切换按钮 -->
-      <div class="move" ref="moveRef">
-        <span style="font-size: 18px; margin-bottom: 25px; color: rgb(225, 238, 250)">{{
-          !isLogin ? '已有账号？' : '还没有账号？'
-        }}</span>
-        <span style="font-size: 16px; color: rgb(225, 238, 250)">{{
-          !isLogin ? '欢迎登录账号！' : '欢迎注册账号！'
-        }}</span>
-        <el-button style="width: 100px; margin-top: 30px" @click="changeLogin">{{
-          !isLogin ? '去登录' : '去注册'
-        }}</el-button>
-      </div>
-    </div>
-    <div ref="vantaRef" class="vanta"></div>
+
+          <el-form ref="loginFormRef2" :model="addForm" :rules="addFormRule" class="auth-form">
+            <el-form-item prop="username">
+              <el-input v-model="addForm.username" placeholder="请输入用户名" clearable>
+                <template #prepend>用户名</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="mail">
+              <el-input v-model="addForm.mail" placeholder="请输入邮箱" clearable>
+                <template #prepend>邮箱</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="phone">
+              <el-input v-model="addForm.phone" placeholder="请输入手机号" clearable>
+                <template #prepend>手机号</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="realName">
+              <el-input v-model="addForm.realName" placeholder="请输入姓名" clearable>
+                <template #prepend>姓名</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input
+                v-model="addForm.password"
+                type="password"
+                placeholder="请输入密码"
+                show-password
+                clearable
+              >
+                <template #prepend>密码</template>
+              </el-input>
+            </el-form-item>
+
+            <div class="form-actions register-actions">
+              <span class="register-tip">注册后会自动登录并跳转到后台首页。</span>
+              <el-button :loading="loading" type="primary" @click="addUser(loginFormRef2)">注册</el-button>
+            </div>
+          </el-form>
+        </div>
+      </article>
+    </section>
   </div>
-  <el-dialog v-model="isWC" title="人机验证" width="40%" :before-close="handleClose">
-    <div class="verification-flex">
-      <span>扫码下方二维码，关注后回复：<strong><span style="color:blue;">link</span></strong>，获取拿个offer-SaaS短链接系统人机验证码</span>
-      <img class="img" src="@/assets/png/公众号二维码.png" alt="">
-      <el-form class="form" :model="verification" :rules="verificationRule" ref="verificationRef">
-        <el-form-item prop="code" label="验证码">
-          <el-input v-model="verification.code" />
-        </el-form-item>
-      </el-form>
-    </div>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="isWC = false">取消</el-button>
-        <el-button type="primary" @click="verificationLogin(verificationRef)">
-          确认
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
-  <!-- </template> -->
 </template>
 
 <script setup>
-import { setToken, setUsername, getUsername } from '@/core/auth.js'
-import { ref, reactive, onMounted, onBeforeUnmount, watch, getCurrentInstance } from 'vue'
+import { getCurrentInstance, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import * as THREE from 'three'
-import WAVES from 'vanta/src/vanta.waves'
+import { getUsername, setToken, setUsername } from '@/core/auth.js'
+
 const { proxy } = getCurrentInstance()
 const API = proxy.$API
+const router = useRouter()
+
 const loginFormRef1 = ref()
 const loginFormRef2 = ref()
-const router = useRouter()
+const isLogin = ref(true)
+const loading = ref(false)
+const checked = ref(true)
+
 const loginForm = reactive({
   username: 'admin',
-  password: 'admin123456',
+  password: 'admin123456'
 })
+
 const addForm = reactive({
   username: '',
   password: '',
@@ -158,7 +173,7 @@ const addFormRule = reactive({
     },
     { min: 11, max: 11, message: '手机号必须是11位', trigger: 'blur' }
   ],
-  username: [{ required: true, message: '请输入您的真实姓名', trigger: 'blur' }],
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 8, max: 15, message: '密码长度请在八位以上', trigger: 'blur' }
@@ -171,356 +186,338 @@ const addFormRule = reactive({
       trigger: 'blur'
     }
   ],
-  realNamee: [
-    { required: true, message: '请输姓名', trigger: 'blur' },
-  ]
+  realName: [{ required: true, message: '请输入姓名', trigger: 'blur' }]
 })
+
 const loginFormRule = reactive({
-  username: [{ required: true, message: '请输入您的真实姓名', trigger: 'blur' }],
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 8, max: 15, message: '密码长度请在八位以上', trigger: 'blur' }
-  ],
+  ]
 })
-// 注册
+
+const persistLoginState = (token, username) => {
+  setToken(token)
+  setUsername(username)
+  localStorage.setItem('token', token)
+  localStorage.setItem('username', username)
+}
+
 const addUser = (formEl) => {
   if (!formEl) return
   formEl.validate(async (valid) => {
-    if (valid) {
-      // 检测用户名是否已经存在
-      const res1 = await API.user.hasUsername({ username: addForm.username })
-      if (res1.data.success !== false) {
-        // 注册
-        const res2 = await API.user.addUser(addForm)
-        // console.log(res2)
-        if (res2.data.success === false) {
-          ElMessage.warning(res2.data.message)
-        } else {
-          const res3 = await API.user.login({ username: addForm.username, password: addForm.password })
-          const token = res3?.data?.data?.token
-          // 将username和token保存到cookies中和localStorage中
-          if (token) {
-            setToken(token)
-            setUsername(addForm.username)
-            localStorage.setItem('token', token)
-            localStorage.setItem('username', addForm.username)
-          }
-          ElMessage.success('注册登录成功！')
-          router.push('/home')
-        }
-      } else {
-        ElMessage.warning('用户名已存在！')
-      }
-    } else {
+    if (!valid) {
       return false
     }
-  })
-
-}
-// 公众号验证码
-const isWC = ref(false)
-const verificationRef = ref()
-const verification = reactive({
-  code: ''
-})
-const verificationRule = reactive({
-  code: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
-})
-const verificationLogin = (formEl) => {
-  if (!formEl) return
-  formEl.validate(async (valid) => {
-    if (valid) {
-      const tempPassword = loginForm.password
-      loginForm.password = verification.code
-      const res1 = await API.user.login(loginForm)
-      if (res1.data.code === '0') {
-        const token = res1?.data?.data?.token
-        // 将username和token保存到cookies中和localStorage中
-        if (token) {
-          setToken(token)
-          setUsername(loginForm.username)
-          localStorage.setItem('token', token)
-          localStorage.setItem('username', loginForm.username)
-        }
-        ElMessage.success('登录成功！')
-        router.push('/home')
-      } else if (res1.data.message === '用户已登录') {
-        // 如果已经登录了，判断一下浏览器保存的登录信息是不是再次登录的信息，如果是就正常登录
-        const cookiesUsername = getUsername()
-        if (cookiesUsername === loginForm.username) {
-          ElMessage.success('登录成功！')
-          router.push('/home')
-        } else {
-          ElMessage.warning('用户已在别处登录，请勿重复登录！')
-        }
-      } else {
-        ElMessage.error('请输入正确的验证码!')
+    loading.value = true
+    try {
+      const res1 = await API.user.hasUsername({ username: addForm.username })
+      if (res1.data.success === false) {
+        ElMessage.warning('用户名已存在')
+        return
       }
-      loginForm.password = tempPassword
+
+      const res2 = await API.user.addUser(addForm)
+      if (res2.data.success === false) {
+        ElMessage.warning(res2.data.message)
+        return
+      }
+
+      const res3 = await API.user.login({ username: addForm.username, password: addForm.password })
+      const token = res3?.data?.data?.token
+      if (token) {
+        persistLoginState(token, addForm.username)
+      }
+      ElMessage.success('注册登录成功')
+      router.push('/home')
+    } finally {
+      loading.value = false
     }
   })
 }
-// 登录
+
 const login = (formEl) => {
   if (!formEl) return
   formEl.validate(async (valid) => {
-    if (valid) {
-      // 当域名为下面这两个时，弹出公众号弹框
-      // let domain = window.location.host
-      // if (domain === 'shortlink.magestack.cn' || domain === 'shortlink.nageoffer.com') {
-      //   isWC.value = true
-      //   return
-      // }
+    if (!valid) {
+      return false
+    }
+    loading.value = true
+    try {
       const res1 = await API.user.login(loginForm)
       if (res1.data.code === '0') {
         const token = res1?.data?.data?.token
-        // 将username和token保存到cookies中和localStorage中
         if (token) {
-          setToken(token)
-          setUsername(loginForm.username)
-          localStorage.setItem('token', token)
-          localStorage.setItem('username', loginForm.username)
+          persistLoginState(token, loginForm.username)
         }
-        ElMessage.success('登录成功！')
+        ElMessage.success('登录成功')
         router.push('/home')
-      } else if (res1.data.message === '用户已登录') {
-        // 如果已经登录了，判断一下浏览器保存的登录信息是不是再次登录的信息，如果是就正常登录
+        return
+      }
+
+      if (res1.data.message === '用户已登录') {
         const cookiesUsername = getUsername()
         if (cookiesUsername === loginForm.username) {
-          ElMessage.success('登录成功！')
+          ElMessage.success('登录成功')
           router.push('/home')
         } else {
-          ElMessage.warning('用户已在别处登录，请勿重复登录！')
+          ElMessage.warning('用户已在别处登录，请勿重复登录')
         }
-      } else if (res1.data.message === '用户不存在') {
-        ElMessage.error('请输入正确的账号密码!')
+        return
       }
-    } else {
-      return false
+
+      if (res1.data.message === '用户不存在') {
+        ElMessage.error('请输入正确的账号密码')
+      }
+    } finally {
+      loading.value = false
     }
   })
-
-
-}
-
-const loading = ref(false)
-// 是否记住密码
-const checked = ref(true)
-const vantaRef = ref()
-// 动态背景
-let vantaEffect = null
-onMounted(() => {
-  vantaEffect = WAVES({
-    el: vantaRef.value,
-    THREE: THREE,
-    mouseControls: true,
-    touchControls: true,
-    gyroControls: false,
-    minHeight: 200.0,
-    minWidth: 200.0,
-    scale: 1.0,
-    scaleMobile: 1.0
-  })
-})
-onBeforeUnmount(() => {
-  if (vantaEffect) {
-    vantaEffect.destroy()
-  }
-})
-// 展示登录还是展示注册
-const isLogin = ref(true)
-const moveRef = ref() // 左右移动的切换按钮模块
-const changeLogin = () => {
-  let domain = window.location.host
-  if (domain === 'shortlink.magestack.cn' || domain === 'shortlink.nageoffer.com') {
-    ElMessage.warning('演示环境暂不支持注册')
-    return
-  }
-  isLogin.value = !isLogin.value
-  if (isLogin.value) {
-    moveRef.value.style.transform = 'translate(0, 0)'
-  } else {
-    moveRef.value.style.transform = 'translate(-420px, 0)'
-  }
 }
 </script>
 
 <style lang="less" scoped>
-.login-box {
-  border: 2px solid #0984e3;
+.login-page {
+  position: relative;
+  min-height: 100vh;
   overflow: hidden;
-  display: flex;
-  justify-content: space-between;
-  border-radius: 20px;
-  padding: 0 40px 0 40px;
-  width: 700px;
-  // background-color: #eee;
+  background: #102721;
+}
+
+.background-layer {
   position: absolute;
-  z-index: 999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-sizing: border-box;
-  // border: 1px solid #eee;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  background-color: #fff;
-  animation: hideIndex 0.5s;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(202, 157, 83, 0.22), transparent 26%),
+    radial-gradient(circle at 85% 15%, rgba(97, 167, 143, 0.2), transparent 30%),
+    linear-gradient(135deg, #0f1716 0%, #18322c 55%, #f2e8d8 180%);
+}
 
-  h2 {
-    font-size: 30px;
-    font-family:
-      PingFangSC-Semibold,
-      PingFang SC;
-    font-weight: 600;
-    color: #3a3f63;
-    width: 100%;
-    text-align: center;
-    padding: 20px;
+.grain-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at center, black 58%, transparent 100%);
+}
+
+.login-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(320px, 1.15fr) minmax(360px, 520px);
+  align-items: center;
+  gap: 36px;
+  padding: 48px;
+}
+
+.intro-panel {
+  padding: 36px;
+  color: #f7f3eb;
+}
+
+.panel-tag {
+  display: inline-flex;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(242, 232, 216, 0.1);
+  color: #e7cfaa;
+  font-size: 12px;
+  letter-spacing: 0.24em;
+}
+
+.intro-panel h1 {
+  margin-top: 24px;
+  font-size: 68px;
+  line-height: 1;
+  font-family: Georgia, 'Times New Roman', 'Songti SC', serif;
+  font-weight: 700;
+}
+
+.panel-summary {
+  max-width: 620px;
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.85;
+  color: rgba(247, 243, 235, 0.78);
+}
+
+.feature-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 34px;
+}
+
+.feature-card {
+  min-height: 150px;
+  padding: 22px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 12px;
   }
 
-  .el-form-item {
-    margin-bottom: 23px;
-  }
-
-  .btn-gourp {
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-
-    .el-button {
-      width: 100px;
-    }
-
-    .remeber-password {
-      left: 0;
-      line-height: 0.5rem;
-    }
-  }
-
-  .el-checkbox {
-    width: 100%;
-    text-align: center;
-    margin-top: 1rem;
+  span {
+    color: rgba(247, 243, 235, 0.72);
+    line-height: 1.8;
   }
 }
 
-/deep/ .el-form-item__content {
+.default-account {
+  margin-top: 28px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(16, 39, 33, 0.42);
+
+  span {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: #d2b88e;
+  }
+
+  strong {
+    font-size: 22px;
+    color: #fff3de;
+  }
+}
+
+.auth-panel {
+  padding: 20px;
+  border-radius: 32px;
+  background: rgba(252, 248, 241, 0.88);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(16px);
+}
+
+.auth-switch {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 8px;
+  border-radius: 22px;
+  background: #ebe3d5;
+}
+
+.switch-button {
+  border: 0;
+  padding: 14px 0;
+  border-radius: 16px;
+  background: transparent;
+  color: #6d614f;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.switch-button.active {
+  background: linear-gradient(135deg, #20483f, #2f6f61);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(32, 72, 63, 0.18);
+}
+
+.auth-card {
+  padding: 28px 16px 6px;
+}
+
+.auth-copy h2 {
+  font-size: 34px;
+  line-height: 1.1;
+  color: #172924;
+  font-family: Georgia, 'Times New Roman', 'Songti SC', serif;
+  font-weight: 700;
+}
+
+.auth-copy p {
+  margin-top: 10px;
+  color: #66756c;
+  line-height: 1.8;
+}
+
+.auth-form {
+  margin-top: 26px;
+}
+
+.form-actions {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.register-actions {
+  align-items: flex-start;
+}
+
+.register-tip {
+  color: #7b817a;
+  line-height: 1.7;
+  font-size: 13px;
+}
+
+:deep(.el-form-item__content) {
   margin-left: 0 !important;
 }
 
-@keyframes hideIndex {
+:deep(.el-input-group__prepend) {
+  color: #41514a;
+  background: #f2ebdd;
+  border-color: #dfd3be;
+}
 
-  // <!--具体细节自己可以调整-->
-  0% {
-    opacity: 0;
-    transform: translate(7.3125rem, -50%);
+:deep(.el-input__wrapper) {
+  box-shadow: 0 0 0 1px #dfd3be inset;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px #2f6f61 inset;
+}
+
+:deep(.el-checkbox__label) {
+  color: #5a655f;
+}
+
+@media (max-width: 1080px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+    padding: 24px;
   }
 
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.login-page {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.vanta {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 0;
-}
-
-.logon {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.hidden {
-  animation: hidden 1s;
-  animation-fill-mode: forwards; // 保持最后的状态
-}
-
-@keyframes hidden {
-
-  // <!--具体细节自己可以调整-->
-  0% {
-    opacity: 1;
+  .intro-panel {
+    padding: 12px 4px;
   }
 
-  70% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 0;
+  .feature-list {
+    grid-template-columns: 1fr;
   }
 }
 
-.move {
-  position: absolute;
-  right: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 40%;
-  transition-duration: 0.5s;
-  align-items: center;
-  background: #06beb6;
-  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #0984e3, #0984e3);
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right,
-      #1a8fd5,
-      #0984e3);
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
-
-.title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 15%;
-  z-index: 999;
-  font-size: 40px;
-  color: #fff;
-  font-weight: bolder;
-}
-
-:deep(.el-input__suffix-inner) {
-  width: 60px;
-}
-
-.form-container1 {
-  transform: translateY(-80%);
-}
-
-.second-font {
-  margin-left: 13px;
-}
-
-.verification-flex {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  .img {
-    margin-top: 10px;
-    align-self: center;
+@media (max-width: 768px) {
+  .intro-panel h1 {
+    font-size: 48px;
   }
-  .form {
-    transform: translateY(15px);
-    width: 90%;
+
+  .auth-panel {
+    padding: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 </style>

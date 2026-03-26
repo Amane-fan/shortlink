@@ -5,7 +5,14 @@
   -webkit-font-smoothing:antialiased;
 }
 :root{
-  --el-color-primary:#2C85EC;
+  --el-color-primary:#2f6f61;
+  --el-color-primary-light-3:#5d9b8e;
+  --el-color-primary-light-5:#83b7ad;
+  --el-color-primary-light-7:#b4d4cc;
+  --el-color-primary-light-9:#e1efeb;
+  --el-color-primary-dark-2:#20483f;
+  --app-page-bg:#eef1eb;
+  --app-text-color:#1a2420;
 }
 html {
   -ms-text-size-adjust: 100%;
@@ -17,10 +24,10 @@ html {
 body {
   margin: 0;
   font-size: 14px;
-  font-family: "Helvetica Neue", Helvetica, STHeiTi, Arial, sans-serif;
+  font-family: "Trebuchet MS", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   line-height: 1.5;
-  color: #333;
-  background-color: #fff;
+  color: var(--app-text-color);
+  background-color: var(--app-page-bg);
   min-height: 100%;
 }
 
